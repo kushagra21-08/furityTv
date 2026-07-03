@@ -1,9 +1,13 @@
 export class fruit{
-    constructor(x, y, color,ctx){
+    constructor(x, y, color,ctx, vx = 0, vy = 0, ax = 0, ay = 0){
         this.x = x;
         this.y = y;
         this.color = randomColor();
         this.ctx = ctx;
+        this.vx = vx;
+        this.vy = vy;
+        this.ax = ax;
+        this.ay = ay;
     }
 
 
