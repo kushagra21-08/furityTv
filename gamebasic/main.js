@@ -3,7 +3,9 @@ import { updateBody } from "./physics.js";
 import { GRAVITY, GROUND_HEIGHT } from "./constants.js";
 import { Ground } from "./ground.js";
 
-var fpsInms = 1000 / 60; // 30 fps
+var fpsInms = 1000 / 60; // 60 fps
+var destroy =0 ;
+
 
 const paper = document.getElementById("canva");
 const ctx = paper.getContext("2d");
@@ -19,7 +21,7 @@ console.log("Canvas resized to: " + paper.width + "x" + paper.height);
 
 
 function randposition(){
-    var x = Math.random() * paper.width;
+    var x = Math.random() * (50 + (paper.width-50));
     //var y = Math.random() * paper.height;
     var y = paper.height + (Math.floor(Math.random() * 41) + 40);
     return {x: x, y: y};
@@ -43,7 +45,7 @@ function init() {
 
     for (let i = 0; i < 5; i++) {
         const { x, y } = randposition();
-        var tempfurit = new fruit(x, y, "red", ctx,50, randVelocity());
+        var tempfurit = new fruit(x, y, "red", ctx,50*Math.random(), randVelocity());
         fruits.add(tempfurit); //add and draw the fruit
         tempfurit.draw();
 
@@ -52,18 +54,27 @@ function init() {
 
 
 
+function addfruit(){
+    var probs= 3
+    if((Math.random()*100) > (100-probs) ){
+
+        const { x, y } = randposition(); // Generate a new random position
+        var tempfurit = new fruit(x, y, "red", ctx,(1000*Math.random())-500, randVelocity()); // Create a new fruit
+        fruits.add(tempfurit); // Add the new fruit to the set
+    }
+
+}
+
 function updatefruits() {   
 
         for (let f of fruits) {
 
-            if (f.y > paper.height + f.radius) { // Check if the fruit is below the canvas
+            if ((f.y > paper.height + f.radius + 10) && f.vy < 0) { // Check if the fruit is below the canvas
                 fruits.delete(f); // Remove the fruit from the set
-                const { x, y } = randposition(); // Generate a new random position
-                var tempfurit = new fruit(x, y, "red", ctx,50, randVelocity()); // Create a new fruit
-                fruits.add(tempfurit); // Add the new fruit to the set
+                destroy++;
+                console.log(destroy)
             }
             else{
-            console.log
             updateBody(f, fpsInms/1000); // Update physics with 30 fps
             f.draw();
             }
@@ -75,7 +86,7 @@ function updatefruits() {
 function updateFrame() {
     //clear canvas
     ctx.clearRect(0, 0, paper.width, paper.height);
-
+    addfruit(); // Add a new fruit with a certain probability
     //ground.draw(); // Draw the ground
     updatefruits();
     
