@@ -5,7 +5,7 @@ import { Ground } from "./ground.js";
 
 var fpsInms = 1000 / 60; // 60 fps
 var destroy =0 ;
-
+var fruits = new Set(); 
 
 const paper = document.getElementById("canva");
 const ctx = paper.getContext("2d");
@@ -18,7 +18,7 @@ paper.width = window.innerWidth;
 paper.height = window.innerHeight;
 console.log("Canvas resized to: " + paper.width + "x" + paper.height);
 }
-
+resizeCanvas();
 
 function randposition(){
     var x = Math.random() * (50 + (paper.width-50));
@@ -35,10 +35,9 @@ function randVelocity(){
     return yy
 }
 
-resizeCanvas();
-window.addEventListener("resize", resizeCanvas);
 
-var fruits = new Set(); 
+
+
 
 function init() {
     //ground.draw();
