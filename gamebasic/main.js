@@ -19,6 +19,7 @@ paper.height = window.innerHeight;
 console.log("Canvas resized to: " + paper.width + "x" + paper.height);
 }
 resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
 
 function randposition(){
     var x = Math.random() * (50 + (paper.width-50));

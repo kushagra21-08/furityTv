@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Sensor Debugger</title>
+
+<style>
+
+            body{
+                background:#111;
+                color:white;
+                font-family:Arial;
+                padding:20px;
+            }
+
+            .card{
+                background:#222;
+                padding:15px;
+                margin-bottom:20px;
+                border-radius:10px;
+            }
+
+            button{
+                padding:15px;
+                font-size:18px;
+                width:100%;
+                margin-bottom:20px;
+            }
+
+            pre{
+                font-size:18px;
+            }
+
+</style>
+
+</head>
+<body>
+
+<h1>Phone Sensor Debugger</h1>
+
+<button id="start">
+Request Sensor Permission
+</button>
+
+<div class="card">
+<h2>Orientation</h2>
+<pre id="orientation"></pre>
+</div>
+
+<div class="card">
+<h2>Motion</h2>
+<pre id="motion"></pre>
+</div>
+
+<div class="card">
+<h2>Screen</h2>
+<pre id="screen"></pre>
+</div>
+
+<script src="main.js"></script>
+
+</body>
+</html>
