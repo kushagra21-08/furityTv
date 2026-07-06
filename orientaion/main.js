@@ -162,7 +162,7 @@ socket.onopen = () => {
 
         function round(v){
             if(v == null) return "-";
-            return Number(v).toFixed(5);
+            return Number(v).toFixed(2);
         }
 
 
