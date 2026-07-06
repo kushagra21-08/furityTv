@@ -2,101 +2,169 @@ const orientationBox = document.getElementById("orientation");
 const motionBox = document.getElementById("motion");
 const screenBox = document.getElementById("screen");
 
-async function startSensors(){
+const socket = new WebSocket("ws://192.168.1.4:8088");
 
-    // iPhone permission
-    if(typeof DeviceMotionEvent !== "undefined" &&
-       typeof DeviceMotionEvent.requestPermission === "function"){
+const sensorData = {
+    alpha: 0,
+    beta: 0,
+    gamma: 0,
+    compass:0,
+    absolute:null,
 
-        const response = await DeviceMotionEvent.requestPermission();
 
-        if(response !== "granted"){
-            alert("Permission denied");
-            return;
+    ax: 0,
+    ay: 0,
+    az: 0,
+    axg: 0,
+    ayg:0,
+    azg:0,
+
+    rotationAlpha: 0,
+    rotationBeta: 0,
+    rotationGamma: 0,
+
+    interval: 0,
+
+    screenOrientation: 0,
+    screenType: null
+};
+
+
+socket.onopen = () => {
+    console.log("Connected!");
+
+    function sendUpdate() {
+
+        if (socket.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify(sensorData));}
+         else { console.log("WebSocket is not open. Ready state: " + socket.readyState); }
+
+        setTimeout(sendUpdate, 1000); // Send updates every second
+    }
+
+        async function startSensors(){
+
+            // iPhone permission
+            if(typeof DeviceMotionEvent !== "undefined" &&
+            typeof DeviceMotionEvent.requestPermission === "function"){
+
+                const response = await DeviceMotionEvent.requestPermission();
+
+                if(response !== "granted"){
+                    alert("Permission denied");
+                    return;
+                }
+            }
+
+            if(typeof DeviceOrientationEvent !== "undefined" &&
+            typeof DeviceOrientationEvent.requestPermission === "function"){
+
+                await DeviceOrientationEvent.requestPermission();
+            }
+
+
+            window.addEventListener("deviceorientation", orientationHandler);
+
+            window.addEventListener("devicemotion", motionHandler);
+
+            updateScreen();
+
+            screen.orientation.addEventListener("change", updateScreen);
+
+            sendUpdate(); // Start sending updates to the server
         }
-    }
 
-    if(typeof DeviceOrientationEvent !== "undefined" &&
-       typeof DeviceOrientationEvent.requestPermission === "function"){
+        document.getElementById("start").onclick = startSensors;
 
-        await DeviceOrientationEvent.requestPermission();
-    }
+        function orientationHandler(e){
 
-    window.addEventListener("deviceorientation", orientationHandler);
+            sensorData.alpha = round(e.alpha);
+            sensorData.beta = round(e.beta);
+            sensorData.gamma = round(e.gamma);
+            sensorData.compass = round(e.webkitCompassHeading);
+            sensorData.absolute = e.absolute;
 
-    window.addEventListener("devicemotion", motionHandler);
+            orientationBox.textContent =
 
-    updateScreen();
+        `Alpha (Yaw)   : ${round(e.alpha)}°
+        Beta (Pitch)  : ${round(e.beta)}°
+        Gamma (Roll)  : ${round(e.gamma)}°
 
-    screen.orientation.addEventListener("change", updateScreen);
-}
+        Absolute : ${e.absolute}
 
-document.getElementById("start").onclick = startSensors;
+        Compass :
+        ${round(e.webkitCompassHeading)}`;
 
-function orientationHandler(e){
+        }
 
-    orientationBox.textContent =
+        function motionHandler(e){
 
-`Alpha (Yaw)   : ${round(e.alpha)}°
-Beta (Pitch)  : ${round(e.beta)}°
-Gamma (Roll)  : ${round(e.gamma)}°
+            sensorData.ax = round(e.acceleration.x);
+            sensorData.ay = round(e.acceleration.y);
+            sensorData.az = round(e.acceleration.z);
+            sensorData.axg = round(e.accelerationIncludingGravity.x);
+            sensorData.ayg = round(e.accelerationIncludingGravity.y);
+            sensorData.azg = round(e.accelerationIncludingGravity.z);
+            sensorData.interval = round(e.interval);
+            sensorData.rotationAlpha = round(e.rotationRate.alpha);
+            sensorData.rotationBeta = round(e.rotationRate.beta);
+            sensorData.rotationGamma = round(e.rotationRate.gamma);
 
-Absolute : ${e.absolute}
 
-Compass :
-${round(e.webkitCompassHeading)}
-`;
+            motionBox.textContent =
 
-}
+        `Acceleration
 
-function motionHandler(e){
+        X : ${round(e.acceleration.x)}
+        Y : ${round(e.acceleration.y)}
+        Z : ${round(e.acceleration.z)}
 
-    motionBox.textContent =
+        -------------------------
 
-`Acceleration
+        Acceleration + Gravity
 
-X : ${round(e.acceleration.x)}
-Y : ${round(e.acceleration.y)}
-Z : ${round(e.acceleration.z)}
+        X : ${round(e.accelerationIncludingGravity.x)}
+        Y : ${round(e.accelerationIncludingGravity.y)}
+        Z : ${round(e.accelerationIncludingGravity.z)}
 
--------------------------
+        -------------------------
 
-Acceleration + Gravity
+        Rotation Rate
 
-X : ${round(e.accelerationIncludingGravity.x)}
-Y : ${round(e.accelerationIncludingGravity.y)}
-Z : ${round(e.accelerationIncludingGravity.z)}
+        Alpha : ${round(e.rotationRate.alpha)}
+        Beta  : ${round(e.rotationRate.beta)}
+        Gamma : ${round(e.rotationRate.gamma)}
 
--------------------------
+        -------------------------
 
-Rotation Rate
+        Interval
 
-Alpha : ${round(e.rotationRate.alpha)}
-Beta  : ${round(e.rotationRate.beta)}
-Gamma : ${round(e.rotationRate.gamma)}
+        ${round(e.interval)} ms`;
 
--------------------------
+        }
 
-Interval
 
-${round(e.interval)} ms`;
+        function updateScreen(){
 
-}
+            sensorData.screenAngle = round(screen.orientation.angle);
+            sensorData.screenType = screen.orientation.type;
 
-function updateScreen(){
+            screenBox.textContent =
 
-    screenBox.textContent =
+        `Screen Angle
 
-`Screen Angle
+        ${screen.orientation.angle}
 
-${screen.orientation.angle}
+        Type
 
-Type
+        ${screen.orientation.type}`;
+        }
 
-${screen.orientation.type}`;
-}
+        function round(v){
+            if(v == null) return "-";
+            return Number(v).toFixed(5);
+        }
 
-function round(v){
-    if(v == null) return "-";
-    return Number(v).toFixed(5);
-}
+
+
+};
