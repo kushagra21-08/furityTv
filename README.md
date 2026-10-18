@@ -17,12 +17,11 @@ The focus is on:
 
 ## Goals
 
-- [ ] Connect phones to a host device
-- [ ] Send controller inputs in real time
-- [ ] Display the game on a TV/browser
-- [ ] Support multiple players
-- [ ] Keep latency as low as possible
-- [ ] Learn networking and game architecture
+ Connect phones to a host device
+  Send controller inputs in real time
+ Display the game on a TV/browser
+ Support multiple players  Keep latency as low as possible
+ Learn networking and game architecture
 
 ---
 
@@ -69,24 +68,7 @@ This project is mainly being built to learn:
 - Browser APIs
 - WebSockets
 - WebRTC
-- TypeScript (later)
-
----
-
-## Current Status
-
-🚧 Planning phase
-
-No code has been written yet.
-
----
 
 ## Future Ideas
-
-- Gyroscope racing games
-- Party games
-- Rhythm games
-- Drawing games
-- Quiz games
 - Motion-controlled games
 - AI-assisted gameplay
